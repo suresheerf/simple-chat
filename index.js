@@ -3,8 +3,7 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
-const joinRoom = require('./joinRoom');
-const newMessage = require('./newMessage');
+
 const io = new Server(server);
 
 app.get('/', (req, res) => {
@@ -26,7 +25,7 @@ io.on('connection', (socket) => {
         date: new Date()
       });
     } else {
-      console.log('roooom');
+      console.log('roooom', room);
       socket.to(room).emit('chat message', {
         from: username,
         message: msg,

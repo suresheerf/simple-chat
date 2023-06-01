@@ -105,7 +105,7 @@
       e.preventDefault();
       if (input.value) {
         if (room.value) {
-          socket.emit('chat message', input.value, room, username.value);
+          socket.emit('chat message', input.value, room.value, username.value);
         } else {
           alert('Please join any room to send messages');
         }
