@@ -10,6 +10,16 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+const rooms = {};
+
+const addToRoom = (roomName, username, socketId) => {
+  if (rooms[roomName] === undefined) {
+    rooms[roomName] = [{ username, id: socketId }];
+  } else {
+    rooms[roomName].push({ username, id: socketId });
+  }
+};
+
 io.on('connection', (socket) => {
   let username;
   console.log(`a user connected with id: ${socket.id}`);
@@ -35,11 +45,12 @@ io.on('connection', (socket) => {
   });
   socket.on('join room', (room, name, cb) => {
     if (!name) {
-      cb('please enter username');
+      cb('error', username, socket.id, 'please enter username');
     } else {
       username = name;
       socket.join(room);
-      cb('joined');
+      addToRoom(room, username, socket.id);
+      cb('success', username, socket.id);
 
       socket.to(room).emit('chat message', {
         from: name,
@@ -48,10 +59,7 @@ io.on('connection', (socket) => {
       });
     }
   });
-  socket.on('room members', (room) => {
-    const clients = io.sockets.adapter.rooms.get(room);
-    const numClients = clients ? clients.size : 0;
-  });
+  socket.on('room members', (room) => {});
 });
 
 server.listen(3000, () => {

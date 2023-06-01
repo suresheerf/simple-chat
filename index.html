@@ -66,6 +66,7 @@
   <body>
     <div style="display: flex">
       <div style="flex-grow: 1">
+        <h3 style="text-align: center">Mesages</h3>
         <ul id="messages"></ul>
         <form id="form" action="">
           <label for="message">message</label>
@@ -74,19 +75,14 @@
       </div>
       <div style="flex-grow: 1">
         <h3 style="text-align: center">Members</h3>
-        <ul id="members">
-          <li>user1</li>
-          <li>user2</li>
-          <li>user3</li>
-          <li>user4</li>
-        </ul>
+        <ul id="members"></ul>
         <form id="form1" action="">
           <label for="room">room</label>
           <input id="room" autocomplete="off" />
           <br />
           <label for="username">username</label>
           <input id="username" autocomplete="off" />
-          <button>Send</button>
+          <button>Join</button>
         </form>
       </div>
     </div>
@@ -121,14 +117,24 @@
         return;
       }
       if (room.value) {
-        socket.emit('join room', room.value, username.value, (meesage) => {
-          alert(meesage);
-        });
+        socket.emit(
+          'join room',
+          room.value,
+          username.value,
+          (status, name, id, errorMessage) => {
+            if (status === 'success') {
+              var item = document.createElement('li');
+              item.textContent = name;
+              members.appendChild(item);
+            } else {
+              alert(errorMessage);
+            }
+          }
+        );
       }
     });
 
     socket.on('chat message', function (msg) {
-      console.log('messageeeeeeeeeeee');
       var item = document.createElement('li');
       item.textContent = JSON.stringify(msg);
       messages.appendChild(item);
