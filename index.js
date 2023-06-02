@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
         message: `${name} joined`,
         date: new Date(),
       });
-      socket.to(room).emit("new member", username);
+      socket.to(room).emit("new member", { username, id: socket.id });
     }
   });
   socket.on("room members", (room) => {});

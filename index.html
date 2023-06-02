@@ -154,7 +154,8 @@
   });
   socket.on('new member', function(msg) {
     var item = document.createElement('li');
-    item.textContent = msg;
+    item.setAttribute('id', message.id)
+    item.textContent = msg.username;
     members.appendChild(item);
 
   });
