@@ -1,144 +1,167 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Socket.IO chat</title>
-    <style>
-      body {
-        margin: 0;
-        padding-bottom: 3rem;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          Helvetica, Arial, sans-serif;
-      }
 
-      #form {
-        padding: 0.25rem;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        height: 3rem;
-        box-sizing: border-box;
-        backdrop-filter: blur(10px);
-      }
-      #form1 {
-        padding: 0.25rem;
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        height: 3rem;
-        box-sizing: border-box;
-        backdrop-filter: blur(10px);
-      }
-      #message {
-        background: rgba(0, 0, 0, 0.15);
-        border: none;
-        padding: 0 1rem;
-        border-radius: 2rem;
-        margin: 0.25rem;
-      }
-      #input:focus {
-        outline: none;
-      }
-      #form > button {
-        background: #333;
-        border: none;
-        padding: 0 1rem;
-        margin: 0.25rem;
-        border-radius: 3px;
-        outline: none;
-        color: #fff;
-      }
+<head>
+  <title>Socket.IO chat</title>
+  <style>
+    body {
+      margin: 0;
+      padding-bottom: 3rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Helvetica, Arial, sans-serif;
+    }
 
-      #messages {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-      #messages > li {
-        padding: 0.5rem 1rem;
-      }
-      #messages > li:nth-child(odd) {
-        background: #efefef;
-      }
-    </style>
-  </head>
-  <body>
-    <div style="display: flex">
-      <div style="flex-grow: 1">
-        <h3 style="text-align: center">Mesages</h3>
-        <ul id="messages"></ul>
-        <form id="form" action="">
-          <label for="message">message</label>
-          <input id="message" autocomplete="off" /><button>Send</button>
-        </form>
-      </div>
-      <div style="flex-grow: 1">
-        <h3 style="text-align: center">Members</h3>
-        <ul id="members"></ul>
-        <form id="form1" action="">
-          <label for="room">room</label>
-          <input id="room" autocomplete="off" />
-          <br />
-          <label for="username">username</label>
-          <input id="username" autocomplete="off" />
-          <button>Join</button>
-        </form>
-      </div>
+    #form {
+      padding: 0.25rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      height: 3rem;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+    }
+
+    #form1 {
+      padding: 0.25rem;
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      height: 3rem;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+    }
+
+    #message {
+      background: rgba(0, 0, 0, 0.15);
+      border: none;
+      padding: 0 1rem;
+      border-radius: 2rem;
+      margin: 0.25rem;
+    }
+
+    #input:focus {
+      outline: none;
+    }
+
+    #form>button {
+      background: #333;
+      border: none;
+      padding: 0 1rem;
+      margin: 0.25rem;
+      border-radius: 3px;
+      outline: none;
+      color: #fff;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages>li {
+      padding: 0.5rem 1rem;
+    }
+
+    #messages>li:nth-child(odd) {
+      background: #efefef;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="display: flex">
+    <div style="flex-grow: 1">
+      <h3 style="text-align: center">Mesages</h3>
+      <ul id="messages"></ul>
+      <form id="form" action="">
+        <label for="message">message</label>
+        <input id="message" autocomplete="off" /><button>Send</button>
+      </form>
     </div>
-  </body>
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    var socket = io();
-    var form = document.getElementById('form');
-    var input = document.getElementById('message');
+    <div style="flex-grow: 1">
+      <h3 style="text-align: center">Members</h3>
+      <ul id="members"></ul>
+      <form id="form1" action="">
+        <label for="room">room</label>
+        <input id="room" autocomplete="off" />
+        <br />
+        <label for="username">username</label>
+        <input id="username" autocomplete="off" />
+        <button>Join</button>
+      </form>
+    </div>
+  </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+  var form = document.getElementById('form');
+  var input = document.getElementById('message');
 
-    var form1 = document.getElementById('form1');
-    var room = document.getElementById('room');
-    var username = document.getElementById('username');
+  var form1 = document.getElementById('form1');
+  var room = document.getElementById('room');
+  var username = document.getElementById('username');
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (input.value) {
-        if (room.value) {
-          socket.emit('chat message', input.value, room.value, username.value);
-        } else {
-          alert('Please join any room to send messages');
-        }
-        // socket.emit('chat message', input.value);
-        input.value = '';
-      }
-    });
-
-    form1.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (!username.value) {
-        alert('Please enter username to join room');
-        return;
-      }
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (input.value) {
       if (room.value) {
-        socket.emit(
-          'join room',
-          room.value,
-          username.value,
-          (status, name, id, errorMessage) => {
-            if (status === 'success') {
-              var item = document.createElement('li');
-              item.textContent = name;
-              members.appendChild(item);
-            } else {
-              alert(errorMessage);
-            }
-          }
-        );
+        socket.emit('chat message', input.value, room.value, username.value);
+      } else {
+        alert('Please join any room to send messages');
       }
-    });
+      // socket.emit('chat message', input.value);
+      input.value = '';
+    }
+  });
 
-    socket.on('chat message', function (msg) {
-      var item = document.createElement('li');
-      item.textContent = JSON.stringify(msg);
-      messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
-    });
-  </script>
+  form1.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!username.value) {
+      alert('Please enter username to join room');
+      return;
+    }
+    if (room.value) {
+      socket.emit(
+        'join room',
+        room.value,
+        username.value,
+        (status, name, id, roomMembers, errorMessage) => {
+          if (status === 'success') {
+            console.log("roomMembers:", roomMembers)
+            roomMembers.forEach(element => {
+              const item = document.createElement('li');
+              item.setAttribute('id', element.id)
+              item.textContent = element.username;
+              members.appendChild(item);
+            });
+          } else {
+            alert(errorMessage);
+          }
+        }
+      );
+    }
+  });
+
+  socket.on('chat message', function(msg) {
+    var item = document.createElement('li');
+    item.textContent = JSON.stringify(msg);
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+  socket.on('new member', function(msg) {
+    var item = document.createElement('li');
+    item.textContent = msg;
+    members.appendChild(item);
+
+  });
+  socket.on('member left', function(id) {
+    var item = document.getElementById(id);
+    item.remove();
+  });
+</script>
+
 </html>
