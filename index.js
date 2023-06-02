@@ -29,13 +29,11 @@ io.on("connection", (socket) => {
       if (rooms[room].find((item) => item.id == socket.id)) {
         console.log("found user234");
         socket.to(room).emit("member left", socket.id);
-        socket
-          .to(room)
-          .emit("chat message", {
-            from: username,
-            meesage: `left the room`,
-            date: new Date(),
-          });
+        socket.to(room).emit("chat message", {
+          from: username,
+          meesage: `left the room`,
+          date: new Date(),
+        });
         rooms[room] = rooms[room].filter((item) => item.id !== socket.id);
       }
     }
@@ -79,5 +77,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(3005, () => {
-  console.log("listening on *:3000");
+  console.log("listening on *:3005");
 });
